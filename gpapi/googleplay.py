@@ -54,6 +54,7 @@ class RequestError(Exception):
     def __str__(self):
         return repr(self.value)
 
+
 class SecurityCheckError(Exception):
     def __init__(self, value):
         self.value = value
@@ -68,8 +69,7 @@ class GooglePlayAPI(object):
     Usual APIs methods are login(), search(), details(), bulkDetails(),
     download(), browse(), reviews() and list()."""
 
-    def __init__(self, locale="en_US", timezone="UTC", device_codename="bacon",
-                 proxies_config=None):
+    def __init__(self, locale="en_US", timezone="UTC", device_codename="bacon", proxies_config=None):
         self.authSubToken = None
         self.gsfId = None
         self.device_config_token = None
@@ -103,7 +103,7 @@ class GooglePlayAPI(object):
         modulus = utils.toBigInt(binaryKey[4:][0:i])
         # exponent
         j = utils.readInt(binaryKey, i + 4)
-        exponent = utils.toBigInt(binaryKey[i + 8:][0:j])
+        exponent = utils.toBigInt(binaryKey[i + 8 :][0:j])
 
         # calculate SHA1 of the pub key
         digest = hashes.Hash(hashes.SHA1(), backend=default_backend())
@@ -118,11 +118,7 @@ class GooglePlayAPI(object):
         to_be_encrypted = login.encode() + b'\x00' + passwd.encode()
         ciphertext = publicKey.encrypt(
             to_be_encrypted,
-            padding.OAEP(
-                mgf=padding.MGF1(algorithm=hashes.SHA1()),
-                algorithm=hashes.SHA1(),
-                label=None
-            )
+            padding.OAEP(mgf=padding.MGF1(algorithm=hashes.SHA1()), algorithm=hashes.SHA1(), label=None),
         )
 
         return urlsafe_b64encode(h + ciphertext)
@@ -157,9 +153,9 @@ class GooglePlayAPI(object):
         request = self.deviceBuilder.getAndroidCheckinRequest()
 
         stringRequest = request.SerializeToString()
-        res = requests.post(CHECKIN_URL, data=stringRequest,
-                            headers=headers, verify=ssl_verify,
-                            proxies=self.proxies_config)
+        res = requests.post(
+            CHECKIN_URL, data=stringRequest, headers=headers, verify=ssl_verify, proxies=self.proxies_config
+        )
         response = googleplay_pb2.AndroidCheckinResponse()
         response.ParseFromString(res.content)
         self.deviceCheckinConsistencyToken = response.deviceCheckinConsistencyToken
@@ -170,11 +166,7 @@ class GooglePlayAPI(object):
         request.accountCookie.append("[" + email + "]")
         request.accountCookie.append(ac2dmToken)
         stringRequest = request.SerializeToString()
-        requests.post(CHECKIN_URL,
-                      data=stringRequest,
-                      headers=headers,
-                      verify=ssl_verify,
-                      proxies=self.proxies_config)
+        requests.post(CHECKIN_URL, data=stringRequest, headers=headers, verify=ssl_verify, proxies=self.proxies_config)
 
         return response.androidId
 
@@ -186,11 +178,9 @@ class GooglePlayAPI(object):
         upload.deviceConfiguration.CopyFrom(self.deviceBuilder.getDeviceConfig())
         headers = self.getHeaders(upload_fields=True)
         stringRequest = upload.SerializeToString()
-        response = requests.post(UPLOAD_URL, data=stringRequest,
-                                 headers=headers,
-                                 verify=ssl_verify,
-                                 timeout=60,
-                                 proxies=self.proxies_config)
+        response = requests.post(
+            UPLOAD_URL, data=stringRequest, headers=headers, verify=ssl_verify, timeout=60, proxies=self.proxies_config
+        )
         response = googleplay_pb2.ResponseWrapper.FromString(response.content)
         try:
             if response.payload.HasField('uploadDeviceConfigResponse'):
@@ -219,8 +209,7 @@ class GooglePlayAPI(object):
             params['callerPkg'] = 'com.google.android.gms'
             headers = self.deviceBuilder.getAuthHeaders(self.gsfId)
             headers['app'] = 'com.google.android.gsm'
-            response = requests.post(AUTH_URL, data=params, verify=ssl_verify,
-                                     proxies=self.proxies_config)
+            response = requests.post(AUTH_URL, data=params, verify=ssl_verify, proxies=self.proxies_config)
             data = response.text.split()
             params = {}
             for d in data:
@@ -232,9 +221,11 @@ class GooglePlayAPI(object):
                 ac2dmToken = params["auth"]
             elif "error" in params:
                 if "NeedsBrowser" in params["error"]:
-                    raise SecurityCheckError("Security check is needed, try to visit "
-                                     "https://accounts.google.com/b/0/DisplayUnlockCaptcha "
-                                     "to unlock, or setup an app-specific password")
+                    raise SecurityCheckError(
+                        "Security check is needed, try to visit "
+                        "https://accounts.google.com/b/0/DisplayUnlockCaptcha "
+                        "to unlock, or setup an app-specific password"
+                    )
                 raise LoginError("server says: " + params["error"])
             else:
                 raise LoginError("Auth token not found.")
@@ -257,11 +248,9 @@ class GooglePlayAPI(object):
         requestParams['app'] = 'com.android.vending'
         headers = self.deviceBuilder.getAuthHeaders(self.gsfId)
         headers['app'] = 'com.android.vending'
-        response = requests.post(AUTH_URL,
-                                 data=requestParams,
-                                 verify=ssl_verify,
-                                 headers=headers,
-                                 proxies=self.proxies_config)
+        response = requests.post(
+            AUTH_URL, data=requestParams, verify=ssl_verify, headers=headers, proxies=self.proxies_config
+        )
         data = response.text.split()
         params = {}
         for d in data:
@@ -290,11 +279,7 @@ class GooglePlayAPI(object):
         params.pop('EncryptedPasswd')
         headers = self.deviceBuilder.getAuthHeaders(self.gsfId)
         headers['app'] = 'com.android.vending'
-        response = requests.post(AUTH_URL,
-                                 data=params,
-                                 headers=headers,
-                                 verify=ssl_verify,
-                                 proxies=self.proxies_config)
+        response = requests.post(AUTH_URL, data=params, headers=headers, verify=ssl_verify, proxies=self.proxies_config)
         data = response.text.split()
         params = {}
         for d in data:
@@ -316,20 +301,19 @@ class GooglePlayAPI(object):
         headers["Content-Type"] = content_type
 
         if post_data is not None:
-            response = requests.post(path,
-                                     data=str(post_data),
-                                     headers=headers,
-                                     params=params,
-                                     verify=ssl_verify,
-                                     timeout=60,
-                                     proxies=self.proxies_config)
+            response = requests.post(
+                path,
+                data=str(post_data),
+                headers=headers,
+                params=params,
+                verify=ssl_verify,
+                timeout=60,
+                proxies=self.proxies_config,
+            )
         else:
-            response = requests.get(path,
-                                    headers=headers,
-                                    params=params,
-                                    verify=ssl_verify,
-                                    timeout=60,
-                                    proxies=self.proxies_config)
+            response = requests.get(
+                path, headers=headers, params=params, verify=ssl_verify, timeout=60, proxies=self.proxies_config
+            )
 
         message = googleplay_pb2.ResponseWrapper.FromString(response.content)
         if message.commands.displayErrorMessage != "":
@@ -338,16 +322,13 @@ class GooglePlayAPI(object):
         return message
 
     def searchSuggest(self, query):
-        params = {"c": "3",
-                  "q": requests.utils.quote(query),
-                  "ssis": "120",
-                  "sst": "2"}
+        params = {"c": "3", "q": requests.utils.quote(query), "ssis": "120", "sst": "2"}
         data = self.executeRequestApi2(SEARCH_SUGGEST_URL, params=params)
         entryIterator = data.payload.searchSuggestResponse.entry
         return list(map(utils.parseProtobufObj, entryIterator))
 
     def search(self, query):
-        """ Search the play store for an app.
+        """Search the play store for an app.
 
         nb_result (int): is the maximum number of result to be returned
 
@@ -393,14 +374,11 @@ class GooglePlayAPI(object):
         req = googleplay_pb2.BulkDetailsRequest()
         req.docid.extend(packageNames)
         data = req.SerializeToString()
-        message = self.executeRequestApi2(BULK_URL,
-                                          post_data=data.decode("utf-8"),
-                                          content_type=CONTENT_TYPE_PROTO,
-                                          params=params)
+        message = self.executeRequestApi2(
+            BULK_URL, post_data=data.decode("utf-8"), content_type=CONTENT_TYPE_PROTO, params=params
+        )
         response = message.payload.bulkDetailsResponse
-        return [None if not utils.hasDoc(entry) else
-                utils.parseProtobufObj(entry.doc)
-                for entry in response.entry]
+        return [None if not utils.hasDoc(entry) else utils.parseProtobufObj(entry.doc) for entry in response.entry]
 
     def home(self, cat=None):
         path = HOME_URL + "?c=3&nocache_isui=true"
@@ -460,14 +438,13 @@ class GooglePlayAPI(object):
             return [c.docid for c in clusters]
         else:
             apps = []
-            for d in data.payload.listResponse.doc: # categories
-                for c in d.child: # sub-category
-                    for a in c.child: # app
+            for d in data.payload.listResponse.doc:  # categories
+                for c in d.child:  # sub-category
+                    for a in c.child:  # app
                         apps.append(utils.parseProtobufObj(a))
             return apps
 
-    def reviews(self, packageName, filterByDevice=False, sort=2,
-                nb_results=None, offset=None):
+    def reviews(self, packageName, filterByDevice=False, sort=2, nb_results=None, offset=None):
         """Browse reviews for an application
 
         Args:
@@ -497,18 +474,24 @@ class GooglePlayAPI(object):
 
     def _deliver_data(self, url, cookies):
         headers = self.getHeaders()
-        response = requests.get(url, headers=headers,
-                                cookies=cookies, verify=ssl_verify,
-                                stream=True, timeout=60,
-                                proxies=self.proxies_config)
+        response = requests.get(
+            url,
+            headers=headers,
+            cookies=cookies,
+            verify=ssl_verify,
+            stream=True,
+            timeout=60,
+            proxies=self.proxies_config,
+        )
         total_size = response.headers.get('content-length')
         chunk_size = 32 * (1 << 10)
-        return {'data': response.iter_content(chunk_size=chunk_size),
-                'total_size': total_size,
-                'chunk_size': chunk_size}
+        return {
+            'data': response.iter_content(chunk_size=chunk_size),
+            'total_size': total_size,
+            'chunk_size': chunk_size,
+        }
 
-    def delivery(self, packageName, versionCode=None, offerType=1,
-                 downloadToken=None, expansion_files=False):
+    def delivery(self, packageName, versionCode=None, offerType=1, downloadToken=None, expansion_files=False):
         """Download an already purchased app.
 
         Args:
@@ -535,16 +518,13 @@ class GooglePlayAPI(object):
             appDetails = self.details(packageName).get('details').get('appDetails')
             versionCode = appDetails.get('versionCode')
 
-        params = {'ot': str(offerType),
-                  'doc': packageName,
-                  'vc': str(versionCode)}
+        params = {'ot': str(offerType), 'doc': packageName, 'vc': str(versionCode)}
         headers = self.getHeaders()
         if downloadToken is not None:
             params['dtok'] = downloadToken
-        response = requests.get(DELIVERY_URL, headers=headers,
-                                params=params, verify=ssl_verify,
-                                timeout=60,
-                                proxies=self.proxies_config)
+        response = requests.get(
+            DELIVERY_URL, headers=headers, params=params, verify=ssl_verify, timeout=60, proxies=self.proxies_config
+        )
         response = googleplay_pb2.ResponseWrapper.FromString(response.content)
         if response.commands.displayErrorMessage != "":
             raise RequestError(response.commands.displayErrorMessage)
@@ -557,9 +537,7 @@ class GooglePlayAPI(object):
             result['splits'] = []
             downloadUrl = response.payload.deliveryResponse.appDeliveryData.downloadUrl
             cookie = response.payload.deliveryResponse.appDeliveryData.downloadAuthCookie[0]
-            cookies = {
-                str(cookie.name): str(cookie.value)
-            }
+            cookies = {str(cookie.name): str(cookie.value)}
             result['file'] = self._deliver_data(downloadUrl, cookies)
 
             for split in response.payload.deliveryResponse.appDeliveryData.split:
@@ -610,22 +588,18 @@ class GooglePlayAPI(object):
             versionCode = appDetails.get('versionCode')
 
         headers = self.getHeaders()
-        params = {'ot': str(offerType),
-                  'doc': packageName,
-                  'vc': str(versionCode)}
+        params = {'ot': str(offerType), 'doc': packageName, 'vc': str(versionCode)}
         self.log(packageName)
-        response = requests.post(PURCHASE_URL, headers=headers,
-                                 params=params, verify=ssl_verify,
-                                 timeout=60,
-                                 proxies=self.proxies_config)
+        response = requests.post(
+            PURCHASE_URL, headers=headers, params=params, verify=ssl_verify, timeout=60, proxies=self.proxies_config
+        )
 
         response = googleplay_pb2.ResponseWrapper.FromString(response.content)
         if response.commands.displayErrorMessage != "":
             raise RequestError(response.commands.displayErrorMessage)
         else:
             dlToken = response.payload.buyResponse.downloadToken
-            return self.delivery(packageName, versionCode, offerType, dlToken,
-                                 expansion_files=expansion_files)
+            return self.delivery(packageName, versionCode, offerType, dlToken, expansion_files=expansion_files)
 
     def log(self, docid):
         log_request = googleplay_pb2.LogRequest()
@@ -634,22 +608,22 @@ class GooglePlayAPI(object):
         log_request.timestamp = timestamp
 
         string_request = log_request.SerializeToString()
-        response = requests.post(LOG_URL,
-                                 data=string_request,
-                                 headers=self.getHeaders(),
-                                 verify=ssl_verify,
-                                 timeout=60,
-                                 proxies=self.proxies_config)
+        response = requests.post(
+            LOG_URL,
+            data=string_request,
+            headers=self.getHeaders(),
+            verify=ssl_verify,
+            timeout=60,
+            proxies=self.proxies_config,
+        )
         response = googleplay_pb2.ResponseWrapper.FromString(response.content)
         if response.commands.displayErrorMessage != "":
             raise RequestError(response.commands.displayErrorMessage)
 
     def toc(self):
-        response = requests.get(TOC_URL,
-                               headers=self.getHeaders(),
-                               verify=ssl_verify,
-                               timeout=60,
-                               proxies=self.proxies_config)
+        response = requests.get(
+            TOC_URL, headers=self.getHeaders(), verify=ssl_verify, timeout=60, proxies=self.proxies_config
+        )
         data = googleplay_pb2.ResponseWrapper.FromString(response.content)
         tocResponse = data.payload.tocResponse
         if utils.hasTosContent(tocResponse) and utils.hasTosToken(tocResponse):
@@ -658,18 +632,16 @@ class GooglePlayAPI(object):
             self.dfeCookie = tocResponse.cookie
         return utils.parseProtobufObj(tocResponse)
 
-
     def acceptTos(self, tosToken):
-        params = {
-            "tost": tosToken,
-            "toscme": "false"
-        }
-        response = requests.get(ACCEPT_TOS_URL,
-                               headers=self.getHeaders(),
-                               params=params,
-                               verify=ssl_verify,
-                               timeout=60,
-                               proxies=self.proxies_config)
+        params = {"tost": tosToken, "toscme": "false"}
+        response = requests.get(
+            ACCEPT_TOS_URL,
+            headers=self.getHeaders(),
+            params=params,
+            verify=ssl_verify,
+            timeout=60,
+            proxies=self.proxies_config,
+        )
         data = googleplay_pb2.ResponseWrapper.FromString(response.content)
         return utils.parseProtobufObj(data.payload.acceptTosResponse)
 

@@ -19,8 +19,7 @@ ACCOUNT = "HOSTED_OR_GOOGLE"
 # if you want to add another phone, just create another section in
 # the file. Some configurations for common phones can be found here:
 # https://github.com/yeriomin/play-store-api/tree/master/src/main/resources
-filepath = path.join(path.dirname(path.realpath(__file__)),
-                     'device.properties')
+filepath = path.join(path.dirname(path.realpath(__file__)), 'device.properties')
 
 if VERSION == 2:
     config = ConfigParser.ConfigParser()
@@ -31,6 +30,7 @@ config.read(filepath)
 
 class InvalidLocaleError(Exception):
     pass
+
 
 class InvalidTimezoneError(Exception):
     pass
@@ -43,13 +43,10 @@ def getDevicesCodenames():
 
 def getDevicesReadableNames():
     """Returns codename and readable name for each device"""
-    return [{'codename': s,
-             'readableName': config.get(s).get('userreadablename')}
-            for s in getDevicesCodenames()]
+    return [{'codename': s, 'readableName': config.get(s).get('userreadablename')} for s in getDevicesCodenames()]
 
 
 class DeviceBuilder(object):
-
     def __init__(self, device):
         self.device = {}
         for (key, value) in config.items(device):
@@ -74,74 +71,84 @@ class DeviceBuilder(object):
         self.timezone = timezone
 
     def getBaseHeaders(self):
-        return {"Accept-Language": self.locale.replace('_', '-'),
-                "X-DFE-Encoded-Targets": DFE_TARGETS,
-                "User-Agent": self.getUserAgent(),
-                "X-DFE-Client-Id": "am-android-google",
-                "X-DFE-MCCMNC": self.device.get('celloperator'),
-                "X-DFE-Network-Type": "4",
-                "X-DFE-Content-Filters": "",
-                "X-DFE-Request-Params": "timeoutMs=4000"}
+        return {
+            "Accept-Language": self.locale.replace('_', '-'),
+            "X-DFE-Encoded-Targets": DFE_TARGETS,
+            "User-Agent": self.getUserAgent(),
+            "X-DFE-Client-Id": "am-android-google",
+            "X-DFE-MCCMNC": self.device.get('celloperator'),
+            "X-DFE-Network-Type": "4",
+            "X-DFE-Content-Filters": "",
+            "X-DFE-Request-Params": "timeoutMs=4000",
+        }
 
     def getDeviceUploadHeaders(self):
         headers = self.getBaseHeaders()
         headers["X-DFE-Enabled-Experiments"] = "cl:billing.select_add_instrument_by_default"
-        headers["X-DFE-Unsupported-Experiments"] = ("nocache:billing.use_charging_poller,"
+        headers["X-DFE-Unsupported-Experiments"] = (
+            "nocache:billing.use_charging_poller,"
             "market_emails,buyer_currency,prod_baseline,checkin.set_asset_paid_app_field,"
-            "shekel_test,content_ratings,buyer_currency_in_app,nocache:encrypted_apk,recent_changes")
+            "shekel_test,content_ratings,buyer_currency_in_app,nocache:encrypted_apk,recent_changes"
+        )
         headers["X-DFE-SmallestScreenWidthDp"] = "320"
         headers["X-DFE-Filter-Level"] = "3"
         return headers
-
 
     def getUserAgent(self):
         version_string = self.device.get('vending.versionstring')
         if version_string is None:
             version_string = '8.4.19.V-all [0] [FP] 175058788'
-        return ("Android-Finsky/{versionString} ("
-                "api=3"
-                ",versionCode={versionCode}"
-                ",sdk={sdk}"
-                ",device={device}"
-                ",hardware={hardware}"
-                ",product={product}"
-                ",platformVersionRelease={platform_v}"
-                ",model={model}"
-                ",buildId={build_id}"
-                ",isWideScreen=0"
-                ",supportedAbis={supported_abis}"
-                ")").format(versionString=version_string,
-                            versionCode=self.device.get('vending.version'),
-                            sdk=self.device.get('build.version.sdk_int'),
-                            device=self.device.get('build.device'),
-                            hardware=self.device.get('build.hardware'),
-                            product=self.device.get('build.product'),
-                            platform_v=self.device.get('build.version.release'),
-                            model=self.device.get('build.model'),
-                            build_id=self.device.get('build.id'),
-                            supported_abis=self.device.get('platforms').replace(',', ';'))
+        return (
+            "Android-Finsky/{versionString} ("
+            "api=3"
+            ",versionCode={versionCode}"
+            ",sdk={sdk}"
+            ",device={device}"
+            ",hardware={hardware}"
+            ",product={product}"
+            ",platformVersionRelease={platform_v}"
+            ",model={model}"
+            ",buildId={build_id}"
+            ",isWideScreen=0"
+            ",supportedAbis={supported_abis}"
+            ")"
+        ).format(
+            versionString=version_string,
+            versionCode=self.device.get('vending.version'),
+            sdk=self.device.get('build.version.sdk_int'),
+            device=self.device.get('build.device'),
+            hardware=self.device.get('build.hardware'),
+            product=self.device.get('build.product'),
+            platform_v=self.device.get('build.version.release'),
+            model=self.device.get('build.model'),
+            build_id=self.device.get('build.id'),
+            supported_abis=self.device.get('platforms').replace(',', ';'),
+        )
 
     def getAuthHeaders(self, gsfid):
-        headers = {"User-Agent": ("GoogleAuth/1.4 ("
-                                  "{device} {id}"
-                                  ")").format(device=self.device.get('build.device'),
-                                              id=self.device.get('build.id'))}
+        headers = {
+            "User-Agent": ("GoogleAuth/1.4 (" "{device} {id}" ")").format(
+                device=self.device.get('build.device'), id=self.device.get('build.id')
+            )
+        }
         if gsfid is not None:
             headers['device'] = "{0:x}".format(gsfid)
         return headers
 
     def getLoginParams(self, email, encrypted_passwd):
-        return {"Email": email,
-                "EncryptedPasswd": encrypted_passwd,
-                "add_account": "1",
-                "accountType": ACCOUNT,
-                "google_play_services_version": self.device.get('gsf.version'),
-                "has_permission": "1",
-                "source": "android",
-                "device_country": self.locale[0:2],
-                "lang": self.locale,
-                "client_sig": "38918a453d07199354f8b19af05ec6562ced5788",
-                "callerSig": "38918a453d07199354f8b19af05ec6562ced5788"}
+        return {
+            "Email": email,
+            "EncryptedPasswd": encrypted_passwd,
+            "add_account": "1",
+            "accountType": ACCOUNT,
+            "google_play_services_version": self.device.get('gsf.version'),
+            "has_permission": "1",
+            "source": "android",
+            "device_country": self.locale[0:2],
+            "lang": self.locale,
+            "client_sig": "38918a453d07199354f8b19af05ec6562ced5788",
+            "callerSig": "38918a453d07199354f8b19af05ec6562ced5788",
+        }
 
     def getAndroidCheckinRequest(self):
         request = googleplay_pb2.AndroidCheckinRequest()
@@ -161,8 +168,8 @@ class DeviceBuilder(object):
         glList = self.device['gl.extensions'].split(",")
         platforms = self.device['platforms'].split(",")
 
-        hasFiveWayNavigation = (self.device['hasfivewaynavigation'] == 'true')
-        hasHardKeyboard = (self.device['hashardkeyboard'] == 'true')
+        hasFiveWayNavigation = self.device['hasfivewaynavigation'] == 'true'
+        hasHardKeyboard = self.device['hashardkeyboard'] == 'true'
         deviceConfig = googleplay_pb2.DeviceConfigurationProto()
         deviceConfig.touchScreen = int(self.device['touchscreen'])
         deviceConfig.keyboard = int(self.device['keyboard'])
@@ -200,7 +207,7 @@ class DeviceBuilder(object):
         androidBuild.buildProduct = self.device['build.product']
         androidBuild.client = self.device['client']
         androidBuild.otaInstalled = False
-        androidBuild.timestamp = int(time()/1000)
+        androidBuild.timestamp = int(time() / 1000)
         androidBuild.googleServices = int(self.device['gsf.version'])
         return androidBuild
 

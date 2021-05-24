@@ -1,4 +1,4 @@
-from gpapi.googleplay import GooglePlayAPI, RequestError
+from gpapi.googleplay import GooglePlayAPI
 
 import sys
 import os
@@ -66,9 +66,7 @@ print(details["title"])
 print("\nGetting reviews for %s\n" % testApps[0])
 revs = server.reviews(testApps[0])
 for r in revs:
-    print("UserId: {0} Vote: {1}".format(
-        r["userProfile"]["personIdString"],
-        str(r["starRating"])))
+    print("UserId: {0} Vote: {1}".format(r["userProfile"]["personIdString"], str(r["starRating"])))
 
 # BROWSE
 print("\nBrowse play store categories\n")
@@ -96,8 +94,7 @@ for c in catList:
     print(c)
 
 limit = 4
-print("\nList only {} apps from subcat {} for {} category\n".format(
-    limit, catList[0], cat))
+print("\nList only {} apps from subcat {} for {} category\n".format(limit, catList[0], cat))
 appList = server.list(cat, catList[0], 4, 1)
 for app in appList:
     print(app["docid"])

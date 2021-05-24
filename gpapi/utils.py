@@ -1,11 +1,10 @@
 import struct
-import sys
-from google.protobuf.message import Message
 from google.protobuf.json_format import MessageToDict
-from . import googleplay_pb2
+
 
 def parseProtobufObj(obj):
     return MessageToDict(obj, False, False, False)
+
 
 def readInt(byteArray, start):
     """Read the byte array, starting from *start* position,
@@ -22,11 +21,13 @@ def toBigInt(byteArray):
         out = out | decoded << key * 8
     return out
 
+
 def hasPrefetch(obj):
     try:
         return len(obj.preFetch) > 0
     except ValueError:
         return False
+
 
 def hasListResponse(obj):
     try:
@@ -34,11 +35,13 @@ def hasListResponse(obj):
     except ValueError:
         return False
 
+
 def hasSearchResponse(obj):
     try:
         return obj.HasField('searchResponse')
     except ValueError:
         return False
+
 
 def hasCluster(obj):
     try:
@@ -46,11 +49,13 @@ def hasCluster(obj):
     except ValueError:
         return False
 
+
 def hasTosContent(tocResponse):
     try:
         return tocResponse.HasField('tosContent')
     except ValueError:
         return False
+
 
 def hasTosToken(tocResponse):
     try:
@@ -58,11 +63,13 @@ def hasTosToken(tocResponse):
     except ValueError:
         return False
 
+
 def hasCookie(tocResponse):
     try:
         return tocResponse.HasField('cookie')
     except ValueError:
         return False
+
 
 def hasDoc(obj):
     # doc an be a single object or a
