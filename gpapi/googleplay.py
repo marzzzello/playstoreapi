@@ -234,6 +234,8 @@ class GooglePlayAPI(object):
             self.getAuthSubToken(email, encryptedPass)
             self.uploadDeviceConfig()
         elif gsfId is not None and authSubToken is not None:
+            if type(gsfId) != int:
+                raise LoginError('gsfId is not of type int')
             # no need to initialize API
             self.gsfId = gsfId
             self.setAuthSubToken(authSubToken)
@@ -345,7 +347,7 @@ class GooglePlayAPI(object):
             response = data.preFetch[0].response
         else:
             response = data
-        resIterator = response.payload.listResponse.doc
+        resIterator = response.payload.listResponse.item
         return list(map(utils.parseProtobufObj, resIterator))
 
     def details(self, packageName):
@@ -372,7 +374,7 @@ class GooglePlayAPI(object):
 
         params = {'au': '1'}
         req = googleplay_pb2.BulkDetailsRequest()
-        req.docid.extend(packageNames)
+        req.DocId.extend(packageNames)
         data = req.SerializeToString()
         message = self.executeRequestApi2(
             BULK_URL, post_data=data.decode("utf-8"), content_type=CONTENT_TYPE_PROTO, params=params
@@ -389,7 +391,7 @@ class GooglePlayAPI(object):
             response = data.preFetch[0].response
         else:
             response = data
-        resIterator = response.payload.listResponse.doc
+        resIterator = response.payload.listResponse.item
         return list(map(utils.parseProtobufObj, resIterator))
 
     def browse(self, cat=None, subCat=None):
@@ -429,18 +431,17 @@ class GooglePlayAPI(object):
             path += "&o={}".format(requests.utils.quote(str(offset)))
         data = self.executeRequestApi2(path)
         clusters = []
-        docs = []
         if ctr is None:
             # list subcategories
             for pf in data.preFetch:
-                for cluster in pf.response.payload.listResponse.doc:
-                    clusters.extend(cluster.child)
+                for cluster in pf.response.payload.listResponse.item:
+                    clusters.extend(cluster.subItem)
             return [c.docid for c in clusters]
         else:
             apps = []
-            for d in data.payload.listResponse.doc:  # categories
-                for c in d.child:  # sub-category
-                    for a in c.child:  # app
+            for d in data.payload.listResponse.item:  # categories
+                for c in d.subItem:  # sub-category
+                    for a in c.subItem:  # app
                         apps.append(utils.parseProtobufObj(a))
             return apps
 
@@ -540,7 +541,7 @@ class GooglePlayAPI(object):
             cookies = {str(cookie.name): str(cookie.value)}
             result['file'] = self._deliver_data(downloadUrl, cookies)
 
-            for split in response.payload.deliveryResponse.appDeliveryData.split:
+            for split in response.payload.deliveryResponse.appDeliveryData.splitDeliveryData:
                 a = {}
                 a['name'] = split.name
                 a['file'] = self._deliver_data(split.downloadUrl, None)

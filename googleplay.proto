@@ -1,6 +1,7 @@
 syntax = "proto2";
 
-// Both sha1 and sha256 are encoded with base64 with URL and Filename Safe Alphabet with padding removed
+// Both sha1 and sha256 are encoded with base64 with URL and Filename Safe
+// Alphabet with padding removed
 message AndroidAppDeliveryData {
   optional int64 downloadSize = 1;
   optional string sha1 = 2;
@@ -1353,7 +1354,7 @@ message Link {
 
 message StreamLink {
   optional string url = 1;
-  optional string streamUrl = 2;
+  optional bytes streamUrl = 2;
   optional string searchUrl = 3;
   optional string subCategoryUrl = 5;
   optional string searchQuery = 11;

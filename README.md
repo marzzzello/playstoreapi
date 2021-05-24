@@ -4,10 +4,10 @@ This project contains an unofficial API for google play interactions. The code m
 [GooglePlayAPI project](https://github.com/egirault/googleplay-api/) which is not
 maintained anymore. The code was updated with some important changes:
 
-* ac2dm authentication with checkin and device info upload
-* updated search and download calls
-* select the device you want to fake from a list of pre-defined values (check `device.properties`)
-(defaults to a OnePlus One)
+- ac2dm authentication with checkin and device info upload
+- updated search and download calls
+- select the device you want to fake from a list of pre-defined values (check `device.properties`)
+  (defaults to a OnePlus One)
 
 # Build
 
@@ -22,29 +22,30 @@ $ python setup.py build
 
 Check scripts in `test` directory for more examples on how to use this API.
 
-```
+```python
 from gpapi.googleplay import GooglePlayAPI
 
-mail = "mymail@google.com"
-passwd = "mypasswd"
+mail = 'mymail@google.com'
+passwd = 'mypasswd'
 
-api = GooglePlayAPI(locale="en_US", timezone="UTC", device_codename="hero2lte")
+api = GooglePlayAPI(locale='en_US', timezone='UTC', device_codename='px_3a')
 api.login(email=mail, password=passwd)
+print(f'authSubToken: {api.authSubToken} gsfId: {api.gsfId}')
 
-result = api.search("firefox")
+result = api.search('firefox')
 
 for doc in result:
-    if 'docid' in doc:
-        print("doc: {}".format(doc["docid"]))
-    for cluster in doc["child"]:
-        print("\tcluster: {}".format(cluster["docid"]))
-        for app in cluster["child"]:
-            print("\t\tapp: {}".format(app["docid"]))
+    if 'id' in doc:
+        print(f"doc: {doc['id']}")
+    for cluster in doc['subItem']:
+        print(f"\tcluster: {cluster['id']}")
+        for app in cluster['subItem']:
+            print(f"\t\tapp: {app['id']}")
 ```
 
 For first time logins, you should only provide email and password.
 The module will take care of initalizing the api, upload device information
-to the google account you supplied, and retrieving 
+to the google account you supplied, and retrieving
 a Google Service Framework ID (which, from now on, will be the android ID of your fake device).
 
 For the next logins you **should** save the gsfId and the authSubToken, and provide them as parameters
