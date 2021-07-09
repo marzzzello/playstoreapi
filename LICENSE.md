@@ -6,6 +6,8 @@
 
 [GPlayApi](https://gitlab.com/AuroraOSS/gplayapi) Copyright (c) 2020-2021 GPL v3
 
+[googleplay-api](https://github.com/NoMore201/googleplay-api) Copyright (c) 2020 GPL v3
+
 ## License
 
 Version 3, 29 June 2007
