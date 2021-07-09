@@ -6,6 +6,10 @@ def parseProtobufObj(obj):
     return MessageToDict(obj, False, False, False)
 
 
+def parseProtobufObj2(obj):
+    return list(map(parseProtobufObj, obj))[0]
+
+
 def readInt(byteArray, start):
     """Read the byte array, starting from *start* position,
     as an 32-bit unsigned integer"""
@@ -79,6 +83,20 @@ def hasDoc(obj):
     except ValueError:
         try:
             existance = len(obj.doc) > 0
+        except TypeError:
+            existance = False
+
+    return existance
+
+
+def hasItem(obj):
+    # doc an be a single object or a
+    # RepeatedComposite object
+    try:
+        existance = obj.HasField('item')
+    except ValueError:
+        try:
+            existance = len(obj.item) > 0
         except TypeError:
             existance = False
 

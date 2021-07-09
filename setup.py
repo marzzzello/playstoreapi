@@ -32,7 +32,7 @@ class ProtobufBuilder(_build):
 
 setup(
     name='gpapi',
-    version='0.4.5',
+    version='0.5.0',
     description='Unofficial python api for google play',
     url='https://gitlab.com/marzzzello/googleplay-api',
     author='NoMore201, marzzzello',

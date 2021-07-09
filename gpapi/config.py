@@ -1,15 +1,8 @@
 from . import googleplay_pb2
+from configparser import ConfigParser
 from time import time
 from os import path
-from sys import version_info
 from re import match
-
-VERSION = version_info[0]
-if VERSION == 2:
-    import ConfigParser
-else:
-    import configparser
-
 
 DFE_TARGETS = "CAEScFfqlIEG6gUYogFWrAISK1WDAg+hAZoCDgIU1gYEOIACFkLMAeQBnASLATlASUuyAyqCAjY5igOMBQzfA/IClwFbApUC4ANbtgKVAS7OAX8YswHFBhgDwAOPAmGEBt4OfKkB5weSB5AFASkiN68akgMaxAMSAQEBA9kBO7UBFE1KVwIDBGs3go6BBgEBAgMECQgJAQIEAQMEAQMBBQEBBAUEFQYCBgUEAwMBDwIBAgOrARwBEwMEAg0mrwESfTEcAQEKG4EBMxghChMBDwYGASI3hAEODEwXCVh/EREZA4sBYwEdFAgIIwkQcGQRDzQ2fTC2AjfVAQIBAYoBGRg2FhYFBwEqNzACJShzFFblAo0CFxpFNBzaAd0DHjIRI4sBJZcBPdwBCQGhAUd2A7kBLBVPngEECHl0UEUMtQETigHMAgUFCc0BBUUlTywdHDgBiAJ+vgKhAU0uAcYCAWQ/5ALUAw1UwQHUBpIBCdQDhgL4AY4CBQICjARbGFBGWzA1CAEMOQH+BRAOCAZywAIDyQZ2MgM3BxsoAgUEBwcHFia3AgcGTBwHBYwBAlcBggFxSGgIrAEEBw4QEqUCASsWadsHCgUCBQMD7QICA3tXCUw7ugJZAwGyAUwpIwM5AwkDBQMJA5sBCw8BNxBVVBwVKhebARkBAwsQEAgEAhESAgQJEBCZATMdzgEBBwG8AQQYKSMUkAEDAwY/CTs4/wEaAUt1AwEDAQUBAgIEAwYEDx1dB2wGeBFgTQ"
 GOOGLE_PUBKEY = "AAAAgMom/1a/v0lblO2Ubrt60J2gcuXSljGFQXgcyZWveWLEwo6prwgi3iJIZdodyhKZQrNWp5nKJ3srRXcUW+F1BD3baEVGcmEgqaLZUNBjm057pKRI16kB0YppeGx5qIQ5QjKzsR8ETQbKLNWgRY0QRNVz34kMJR3P/LgHax/6rmf5AAAAAwEAAQ=="
@@ -21,11 +14,12 @@ ACCOUNT = "HOSTED_OR_GOOGLE"
 # https://github.com/yeriomin/play-store-api/tree/master/src/main/resources
 filepath = path.join(path.dirname(path.realpath(__file__)), 'device.properties')
 
-if VERSION == 2:
-    config = ConfigParser.ConfigParser()
-else:
-    config = configparser.ConfigParser()
+config = ConfigParser()
 config.read(filepath)
+
+config_case_preserved = ConfigParser()
+config_case_preserved.optionxform = str
+config_case_preserved.read(filepath)
 
 
 class InvalidLocaleError(Exception):
@@ -51,6 +45,10 @@ class DeviceBuilder(object):
         self.device = {}
         for (key, value) in config.items(device):
             self.device[key] = value
+
+        self.device_case_preserved = {'CONFIG_NAME': f'{device}.properties'}
+        for (key, value) in config_case_preserved.items(device):
+            self.device_case_preserved[key] = value
 
     def setLocale(self, locale):
         # test if provided locale is valid
