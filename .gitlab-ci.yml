@@ -5,7 +5,8 @@ pypi_upload:
   stage: release
   image: python:latest
   script:
-    - pip install twine protoc-wheel-0
+    - apt-get -qq update && apt-get -qq install -y protobuf-compiler
+    - pip install twine
     - python setup.py sdist bdist_wheel
     - python -m twine upload dist/*
   only:
