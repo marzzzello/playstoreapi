@@ -1,4 +1,4 @@
-from gpapi.googleplay import GooglePlayAPI
+from playstoreapi.googleplay import GooglePlayAPI
 
 import argparse
 

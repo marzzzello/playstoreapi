@@ -23,7 +23,7 @@ class ProtobufBuilder(_build):
             [
                 exec_path,
                 "--proto_path=" + CURRENT_DIR,
-                "--python_out=" + CURRENT_DIR + "/gpapi/",
+                "--python_out=" + CURRENT_DIR + "/playstoreapi/",
                 CURRENT_DIR + "/googleplay.proto",
             ]
         )
@@ -31,15 +31,15 @@ class ProtobufBuilder(_build):
 
 
 setup(
-    name='gpapi',
+    name='playstoreapi',
     version='0.5.0',
     description='Unofficial python api for google play',
-    url='https://gitlab.com/marzzzello/googleplay-api',
+    url='https://gitlab.com/marzzzello/playstoreapi',
     author='NoMore201, marzzzello',
-    author_email='gpapi@07f.de',
+    author_email='playstoreapi@07f.de',
     license='GPL3',
-    packages=['gpapi'],
-    package_data={'gpapi': ['config.py' 'device.properties', 'googleplay_pb2.py', 'googleplay.py', 'utils.py']},
+    packages=['playstoreapi'],
+    package_data={'playstoreapi': ['config.py' 'device.properties', 'googleplay_pb2.py', 'googleplay.py', 'utils.py']},
     include_package_data=True,
     cmdclass={'build_py': ProtobufBuilder},
     install_requires=['cryptography>=2.2', 'protobuf>=3.5.2', 'requests'],
