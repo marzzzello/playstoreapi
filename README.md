@@ -10,7 +10,8 @@
 
 # Google Play Store Python API
 
-This project contains a fork of [googleplay-api](https://github.com/NoMore201/googleplay-api) and an unofficial API for google play interactions.
+This project is fork of [googleplay-api](https://github.com/NoMore201/googleplay-api).
+It contains an unofficial API for google play interactions.
 
 This fork was created to have a better base for the [gplaycrawler](https://gitlab.com/marzzzello/gplaycrawler).
 
