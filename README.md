@@ -26,14 +26,42 @@ The code was updated with the following changes:
 - add streamDetails (used for related apps)
 - add support for next pages to search and streamDetails
 
-# Build
+## Setup
 
-This is the recommended way to build the package, since setuptools will take care of
-generating the `googleplay_pb2.py` file needed by the library (check the `setup.py`)
+Install protobuf:
+
+Using apt:
+
+```sh
+$ apt install -y protobuf-compiler
+```
+
+Using pacman:
+
+```sh
+$ pacman -S protobuf
+```
+
+Check version:
+
+```sh
+$ protoc --version  # Ensure compiler version is 3+
+```
+
+Install playstoreapi using pip:
+
+```
+$ pip install playstoreapi
+```
+
+Or clone the repo and run:
 
 ```
 $ python setup.py build
 ```
+
+These are the recommended ways to build the package, since pip/setuptools will take care of
+generating the `googleplay_pb2.py` file needed by the library (check the `setup.py`)
 
 # Usage
 
