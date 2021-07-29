@@ -50,13 +50,13 @@ $ protoc --version  # Ensure compiler version is 3+
 
 Install playstoreapi using pip:
 
-```
+```sh
 $ pip install playstoreapi
 ```
 
 Or clone the repo and run:
 
-```
+```sh
 $ python setup.py build
 ```
 
