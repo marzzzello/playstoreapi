@@ -16,6 +16,8 @@ from . import googleplay_pb2, config, utils
 CONTENT_TYPE_PROTO = 'application/x-protobuf'
 CONTENT_TYPE_URLENC = 'application/x-www-form-urlencoded; charset=UTF-8'
 
+URL_DISPENSER = 'http://goolag.store:1337/api/auth'
+
 URL_BASE = 'https://play-fe.googleapis.com/'
 # URL_BASE = 'https://android.clients.google.com/'
 URL_FDFE = URL_BASE + 'fdfe/'
@@ -245,16 +247,22 @@ class GooglePlayAPI(object):
         set env vars (optional):
         export PLAYSTORE_TOKEN='ya29.fooooo'
         export PLAYSTORE_GSFID='1234567891234567890'
+        export PLAYSTORE_DISPENSER_URL='http://goolag.store:1337/api/auth'
         '''
         gsfId = os.environ.get('PLAYSTORE_GSFID')
         authSubToken = os.environ.get('PLAYSTORE_TOKEN')
+        tokenDispenser = os.environ.get('PLAYSTORE_DISPENSER_URL')
+
+        if tokenDispenser is None:
+            tokenDispenser = URL_DISPENSER
 
         if gsfId is None or authSubToken is None:
-            self.login(anonymous=True)
+            self.login(anonymous=True, tokenDispenser=URL_DISPENSER)
             if not quiet:
                 print('\nAnonymous login\n')
                 print(f'PLAYSTORE_TOKEN=\'{self.authSubToken}\'')
                 print(f'PLAYSTORE_GSFID=\'{self.gsfId}\'')
+                print(f'PLAYSTORE_DISPENSER_URL=\'{self.gsfId}\'')
         else:
             if not quiet:
                 print('\nLogin with ac2dm token and gsfId provided by environment variables\n')
@@ -267,7 +275,7 @@ class GooglePlayAPI(object):
         gsfId=None,
         authSubToken=None,
         anonymous=False,
-        URL_DISPENSER='http://goolag.store:1337/api/auth',
+        tokenDispenser=URL_DISPENSER,
         check=True,
     ):
         '''

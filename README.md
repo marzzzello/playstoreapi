@@ -95,3 +95,17 @@ a Google Service Framework ID (which, from now on, will be the android ID of you
 For the next logins you **should** save the gsfId and the authSubToken, and provide them as parameters
 to the login function or set them as environement variables. If you login again with email and password,
 this is the equivalent of re-initalizing your android device with a google account, invalidating previous gsfId and authSubToken.
+
+## Environment variables
+
+```sh
+# for envLogin()
+export PLAYSTORE_TOKEN='ya29.fooooo'
+export PLAYSTORE_GSFID='1234567891234567890'
+export PLAYSTORE_DISPENSER_URL='http://goolag.store:1337/api/auth'
+
+# requests
+export HTTP_PROXY='http://localhost:8080'
+export HTTPS_PROXY='http://localhost:8080'
+export CURL_CA_BUNDLE='/usr/local/myproxy_info/cacert.pem'
+```
