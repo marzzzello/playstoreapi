@@ -31,7 +31,7 @@ class ProtobufBuilder(_build):
 
 setup(
     name='playstoreapi',
-    version='0.5.4',
+    version='0.5.6',
     description='Unofficial python api for google play',
     long_description=(CURRENT_DIR / 'README.md').read_text(),
     long_description_content_type='text/markdown',

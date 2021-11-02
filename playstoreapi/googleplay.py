@@ -21,9 +21,8 @@ CONTENT_TYPE_URLENC = 'application/x-www-form-urlencoded; charset=UTF-8'
 
 URL_DISPENSER = 'http://goolag.store:1337/api/auth'
 
-URL_BASE = 'https://play-fe.googleapis.com/'
-# URL_BASE = 'https://android.clients.google.com/'
-URL_FDFE = URL_BASE + 'fdfe/'
+URL_BASE = 'https://android.clients.google.com/'
+URL_FDFE = 'https://play-fe.googleapis.com/fdfe/'
 URL_CHECKIN = URL_BASE + 'checkin'
 URL_AUTH = URL_BASE + 'auth'
 
