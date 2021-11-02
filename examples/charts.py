@@ -29,6 +29,9 @@ def getChart(categorie, chart, ids):
     nextPageUrl = None
     while True:
         data = api.topChart(cat=categorie, chart=chart, nextPageUrl=nextPageUrl)
+        s = data.get('subItem')
+        if s is None:
+            continue
         for subItem in data['subItem']:
             for app in subItem['subItem']:
                 # print('\t{} ({}): {}'.format(chart, len(ids[chart]), app['id']))
