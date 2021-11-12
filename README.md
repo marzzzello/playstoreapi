@@ -28,26 +28,6 @@ The code was updated with the following changes:
 
 ## Setup
 
-Install protobuf:
-
-Using apt:
-
-```sh
-$ apt install -y protobuf-compiler
-```
-
-Using pacman:
-
-```sh
-$ pacman -S protobuf
-```
-
-Check version:
-
-```sh
-$ protoc --version  # Ensure compiler version is 3+
-```
-
 Install playstoreapi using pip:
 
 ```sh
@@ -59,9 +39,6 @@ Or clone the repo and run:
 ```sh
 $ python setup.py build
 ```
-
-These are the recommended ways to build the package, since pip/setuptools will take care of
-generating the `googleplay_pb2.py` file needed by the library (check the `setup.py`)
 
 # Usage
 
