@@ -43,5 +43,5 @@ setup(
     package_data={'playstoreapi': ['config.py' 'device.properties', 'googleplay_pb2.py', 'googleplay.py', 'utils.py']},
     include_package_data=True,
     cmdclass={'build_py': ProtobufBuilder},
-    install_requires=['cryptography>=2.2', 'protobuf>=3.5.2', 'requests'],
+    install_requires=['cryptography>=2.2', 'protoc-wheel-0', 'protobuf>=3.5.2', 'requests'],
 )
