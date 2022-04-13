@@ -19,7 +19,7 @@ from . import googleplay_pb2, config, utils
 CONTENT_TYPE_PROTO = 'application/x-protobuf'
 CONTENT_TYPE_URLENC = 'application/x-www-form-urlencoded; charset=UTF-8'
 
-URL_DISPENSER = 'http://goolag.store:1337/api/auth'
+URL_DISPENSER = 'https://auroraoss.com/api/auth'
 
 URL_BASE = 'https://android.clients.google.com/'
 URL_FDFE = 'https://play-fe.googleapis.com/fdfe/'
